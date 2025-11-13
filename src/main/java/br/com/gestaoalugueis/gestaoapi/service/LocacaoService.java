@@ -9,6 +9,9 @@ import br.com.gestaoalugueis.gestaoapi.repository.LocacaoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.UUID;
+
 @RequiredArgsConstructor
 @Service
 public class LocacaoService {
@@ -33,5 +36,15 @@ public class LocacaoService {
         newLocacao.setInquilino(inquilinoDaLocacao);
 
         return locacaoRepository.save(newLocacao);
+    }
+
+    public List<Locacao> listarLocacao() {
+        return locacaoRepository.findAll();
+    }
+
+    public Locacao buscarLocacaoPorId(UUID id) {
+        return locacaoRepository
+                .findById(id)
+                .orElseThrow(() -> new RuntimeException("Locação não econtrada."));
     }
 }
