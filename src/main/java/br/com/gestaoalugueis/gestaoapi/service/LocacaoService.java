@@ -4,14 +4,18 @@ import br.com.gestaoalugueis.gestaoapi.dto.LocacaoRequestDTO;
 import br.com.gestaoalugueis.gestaoapi.entity.Imovel;
 import br.com.gestaoalugueis.gestaoapi.entity.Inquilino;
 import br.com.gestaoalugueis.gestaoapi.entity.Locacao;
+import br.com.gestaoalugueis.gestaoapi.entity.Pagamento;
 import br.com.gestaoalugueis.gestaoapi.enums.Status;
+import br.com.gestaoalugueis.gestaoapi.enums.StatusPagamento;
 import br.com.gestaoalugueis.gestaoapi.repository.ImovelRepository;
 import br.com.gestaoalugueis.gestaoapi.repository.InquilinoRepository;
 import br.com.gestaoalugueis.gestaoapi.repository.LocacaoRepository;
 import br.com.gestaoalugueis.gestaoapi.repository.PagamentoRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -39,7 +43,32 @@ public class LocacaoService {
         newLocacao.setImovel(imovelDaLocacao);
         newLocacao.setInquilino(inquilinoDaLocacao);
 
-        return locacaoRepository.save(newLocacao);
+        Locacao locacaoSalva = locacaoRepository.save(newLocacao);
+        this.gerarParcelas(locacaoSalva);
+        return locacaoSalva;
+    }
+
+    @Transactional // garante que se um save falhar todas as parcelas geradas são desfeitas(rollback).
+    public void gerarParcelas(Locacao locacaoSalva) {
+
+        LocalDate dataIncio = locacaoSalva.getData_inicio_contrato();       //  Calcula a data de vencimento
+        LocalDate primeiroVencimento = dataIncio.plusMonths(1) //   da primeira parcela
+                .withDayOfMonth(locacaoSalva.getDia_vencimento());         //
+
+        for (int i = 0; i < locacaoSalva.getDuracao_meses(); i++) {
+            LocalDate vencimentoAtual = primeiroVencimento.plusMonths(i);
+
+            LocalDate dataReferencia = vencimentoAtual.minusMonths(1).withDayOfMonth(1);
+
+            Pagamento novaParcela = new Pagamento();
+            novaParcela.setLocacao(locacaoSalva);
+            novaParcela.setValorEsperado(locacaoSalva.getValor_aluguel());
+            novaParcela.setDataVencimento(vencimentoAtual);
+            novaParcela.setDataReferencia(dataReferencia);
+            novaParcela.setStatusPagamento(StatusPagamento.PENDENTE);
+
+            pagamentoRepository.save(novaParcela);
+        }
     }
 
     public List<Locacao> listarLocacao() {
