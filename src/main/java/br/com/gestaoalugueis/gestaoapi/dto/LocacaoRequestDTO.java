@@ -7,7 +7,7 @@ import java.util.UUID;
 public record LocacaoRequestDTO(
         BigDecimal valor_aluguel,
         Integer dia_vencimento,
-        LocalDate data_inico_contrato,
+        LocalDate data_inicio_contrato,
         Integer duracao_meses,
         //IDs das entidades que já existem
         UUID imovelId,

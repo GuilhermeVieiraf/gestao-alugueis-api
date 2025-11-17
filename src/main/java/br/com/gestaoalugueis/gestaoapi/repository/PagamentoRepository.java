@@ -14,7 +14,7 @@ public interface PagamentoRepository extends JpaRepository<Pagamento, UUID> {
 
     @Transactional
     @Modifying // esta anotação indica que a query modifica os dados(DELETE/UPDATE)
-    @Query("DELETE FROM Pagamento p WHERE p.locacao = :locacao AND p.statusPagamentos <> 'PAGO'")
+    @Query("DELETE FROM Pagamento p WHERE p.locacao = :locacao AND p.statusPagamento <> 'PAGO'")
     void deleteFuturePaymentsByLocacao(@Param("locacao") Locacao locacao);
 
 }
