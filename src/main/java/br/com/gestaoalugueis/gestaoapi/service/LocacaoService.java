@@ -37,7 +37,7 @@ public class LocacaoService {
         Locacao newLocacao = new Locacao();
         newLocacao.setValor_aluguel(dto.valor_aluguel());
         newLocacao.setDia_vencimento(dto.dia_vencimento());
-        newLocacao.setData_inicio_contrato(dto.data_inico_contrato());
+        newLocacao.setData_inicio_contrato(dto.data_inicio_contrato());
         newLocacao.setDuracao_meses(dto.duracao_meses());
         newLocacao.setStatus(Status.ATIVO);
         newLocacao.setImovel(imovelDaLocacao);
@@ -99,7 +99,7 @@ public class LocacaoService {
 
         locacaoAtualizado.setValor_aluguel(dto.valor_aluguel());
         locacaoAtualizado.setDia_vencimento(dto.dia_vencimento());
-        locacaoAtualizado.setData_inicio_contrato(dto.data_inico_contrato());
+        locacaoAtualizado.setData_inicio_contrato(dto.data_inicio_contrato());
         locacaoAtualizado.setDuracao_meses(dto.duracao_meses());
 
         locacaoAtualizado.setImovel(imovelBuscado);
