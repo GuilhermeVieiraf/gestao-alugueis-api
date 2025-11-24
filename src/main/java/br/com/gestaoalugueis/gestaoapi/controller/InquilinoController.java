@@ -3,6 +3,7 @@ package br.com.gestaoalugueis.gestaoapi.controller;
 import br.com.gestaoalugueis.gestaoapi.dto.InquilinoRequestDTO;
 import br.com.gestaoalugueis.gestaoapi.entity.Inquilino;
 import br.com.gestaoalugueis.gestaoapi.service.InquilinoService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,7 @@ public class InquilinoController {
     private final InquilinoService inquilinoService;
 
     @PostMapping
-    public ResponseEntity<Inquilino> criar(@RequestBody InquilinoRequestDTO dto){
+    public ResponseEntity<Inquilino> criar(@RequestBody @Valid InquilinoRequestDTO dto){
         var inquilino = inquilinoService.criar(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(inquilino);
     }
@@ -43,7 +44,7 @@ public class InquilinoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Inquilino> atualizar(@PathVariable UUID id, @RequestBody InquilinoRequestDTO dto){
+    public ResponseEntity<Inquilino> atualizar(@PathVariable UUID id, @RequestBody @Valid InquilinoRequestDTO dto){
         var inquilinoAtualizado = inquilinoService.atualizarInquilino(id, dto);
         return ResponseEntity.ok().body(inquilinoAtualizado);
     }
