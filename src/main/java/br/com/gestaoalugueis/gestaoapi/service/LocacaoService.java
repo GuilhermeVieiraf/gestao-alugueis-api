@@ -34,6 +34,10 @@ public class LocacaoService {
         var imovelDaLocacao = imovelRepository.findById(dto.imovelId())
                 .orElseThrow(() -> new RuntimeException("Imovel não encontrado."));
 
+        if (imovelDaLocacao.getStatus() == Status.INATIVO || inquilinoDaLocacao.getStatus() == Status.INATIVO) {
+            throw new RuntimeException("Não é possível criar locação com imóvel ou inquilino inativo.");
+        }
+
         Locacao newLocacao = new Locacao();
         newLocacao.setValor_aluguel(dto.valor_aluguel());
         newLocacao.setDia_vencimento(dto.dia_vencimento());
