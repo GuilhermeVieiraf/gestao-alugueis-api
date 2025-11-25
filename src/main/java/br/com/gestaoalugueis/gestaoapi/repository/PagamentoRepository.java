@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 public interface PagamentoRepository extends JpaRepository<Pagamento, UUID> {
@@ -16,5 +17,14 @@ public interface PagamentoRepository extends JpaRepository<Pagamento, UUID> {
     @Modifying // esta anotação indica que a query modifica os dados(DELETE/UPDATE)
     @Query("DELETE FROM Pagamento p WHERE p.locacao = :locacao AND p.statusPagamento <> 'PAGO'")
     void deleteFuturePaymentsByLocacao(@Param("locacao") Locacao locacao);
+
+    @Transactional
+    @Modifying
+    @Query("UPDATE Pagamento p SET p.valorEsperado = :novoValor " +
+            "WHERE p.locacao.id = :locacaoId AND p.statusPagamento <> 'PAGO'")
+    void updateFutureExpectedValue(  // atualiza o valor esperado em lote para todas as parcelas futuras e não pagas de uma locação
+            @Param("locacaoId") UUID locacaoId,
+            @Param("novoValor") BigDecimal novoValor
+    );
 
 }
