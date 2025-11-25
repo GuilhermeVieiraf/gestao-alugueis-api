@@ -109,6 +109,14 @@ public class LocacaoService {
         locacaoAtualizado.setImovel(imovelBuscado);
         locacaoAtualizado.setInquilino(inquilinoBuscado);
 
-        return locacaoRepository.save(locacaoAtualizado);
+        Locacao locacaoAtualizadaSalva = locacaoRepository.save(locacaoAtualizado);
+
+        pagamentoRepository.updateFutureExpectedValue(
+                locacaoAtualizadaSalva.getId(),
+                locacaoAtualizadaSalva.getValor_aluguel() // o novo valor reajustado
+        );
+
+        return locacaoAtualizadaSalva;
+
     }
 }
