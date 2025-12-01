@@ -1,4 +1,4 @@
-HELP.md
+backend/HELP.md
 target/
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
@@ -33,4 +33,4 @@ build/
 .vscode/
 
 # Ignora o arquivo de segredos de ambiente
-.env
+backend/.env
