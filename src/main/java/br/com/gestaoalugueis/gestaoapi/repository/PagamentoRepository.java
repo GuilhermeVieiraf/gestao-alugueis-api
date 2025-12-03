@@ -18,7 +18,7 @@ public interface PagamentoRepository extends JpaRepository<Pagamento, UUID> {
 
     List<Pagamento> findByStatusPagamentoAndDataVencimentoLessThanEqual(
             StatusPagamento status,
-            LocalDate dataLimete
+            LocalDate dataLimite
     );
 
     @Transactional
