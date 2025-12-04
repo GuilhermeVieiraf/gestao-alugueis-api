@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -33,6 +34,15 @@ public class LocacaoService {
                 .orElseThrow(() -> new RuntimeException("Inquilino não encontrado."));
         var imovelDaLocacao = imovelRepository.findById(dto.imovelId())
                 .orElseThrow(() -> new RuntimeException("Imovel não encontrado."));
+
+        Optional<Locacao> locacaoAtiva = locacaoRepository.findByImovelIdAndStatus(
+                dto.imovelId(),
+                Status.ATIVO
+        );
+
+        if (locacaoAtiva.isPresent()) {
+            throw new RuntimeException("Este imóvel já possui um contrato ATIVO. Encerre o contrato atual antes de criar um novo.");
+        }
 
         if (imovelDaLocacao.getStatus() == Status.INATIVO || inquilinoDaLocacao.getStatus() == Status.INATIVO) {
             throw new RuntimeException("Não é possível criar locação com imóvel ou inquilino inativo.");
