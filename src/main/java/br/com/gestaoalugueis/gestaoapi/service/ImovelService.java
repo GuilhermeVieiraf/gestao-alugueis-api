@@ -3,6 +3,7 @@ package br.com.gestaoalugueis.gestaoapi.service;
 import br.com.gestaoalugueis.gestaoapi.dto.ImovelRequestDTO;
 import br.com.gestaoalugueis.gestaoapi.entity.Imovel;
 import br.com.gestaoalugueis.gestaoapi.enums.Status;
+import br.com.gestaoalugueis.gestaoapi.mapper.ImovelMapper;
 import br.com.gestaoalugueis.gestaoapi.repository.ImovelRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,17 +18,7 @@ public class ImovelService {
     private final ImovelRepository imovelRepository;
 
     public Imovel criar(ImovelRequestDTO dto) {
-        Imovel newImovel = new Imovel();
-        newImovel.setEndereco(dto.endereco());
-        newImovel.setNumero(dto.numero());
-        newImovel.setComplemento(dto.complemento());
-        newImovel.setBairro(dto.bairro());
-        newImovel.setCidade(dto.cidade());
-        newImovel.setEstado(dto.estado());
-        newImovel.setCep(dto.cep());
-        newImovel.setTipoImovel(dto.tipo());
-        newImovel.setStatus(Status.ATIVO); // defini o status como ativo a partir da criação
-
+        Imovel newImovel = ImovelMapper.toEntity(dto);
         return imovelRepository.save(newImovel);
     }
 
@@ -48,15 +39,11 @@ public class ImovelService {
     }
 
     public Imovel atualizar(UUID id, ImovelRequestDTO dto) {
-        Imovel imovelAtualizado = this.buscarImovelPorId(id);
-        imovelAtualizado.setEndereco(dto.endereco());
-        imovelAtualizado.setNumero(dto.numero());
-        imovelAtualizado.setComplemento(dto.complemento());
-        imovelAtualizado.setBairro(dto.bairro());
-        imovelAtualizado.setCidade(dto.cidade());
-        imovelAtualizado.setEstado(dto.estado());
-        imovelAtualizado.setCep(dto.cep());
-        imovelAtualizado.setTipoImovel(dto.tipo());
+        Imovel imovelAntigo = imovelRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Imóvel não encontrado."));
+
+        Imovel imovelAtualizado = ImovelMapper.toEntity(dto);
+        imovelAtualizado.setId(imovelAntigo.getId());
 
         return imovelRepository.save(imovelAtualizado);
     }
