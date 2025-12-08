@@ -7,6 +7,7 @@ import br.com.gestaoalugueis.gestaoapi.entity.Locacao;
 import br.com.gestaoalugueis.gestaoapi.entity.Pagamento;
 import br.com.gestaoalugueis.gestaoapi.enums.Status;
 import br.com.gestaoalugueis.gestaoapi.enums.StatusPagamento;
+import br.com.gestaoalugueis.gestaoapi.mapper.LocacaoMapper;
 import br.com.gestaoalugueis.gestaoapi.repository.ImovelRepository;
 import br.com.gestaoalugueis.gestaoapi.repository.InquilinoRepository;
 import br.com.gestaoalugueis.gestaoapi.repository.LocacaoRepository;
@@ -48,12 +49,7 @@ public class LocacaoService {
             throw new RuntimeException("Não é possível criar locação com imóvel ou inquilino inativo.");
         }
 
-        Locacao newLocacao = new Locacao();
-        newLocacao.setValor_aluguel(dto.valor_aluguel());
-        newLocacao.setDia_vencimento(dto.dia_vencimento());
-        newLocacao.setData_inicio_contrato(dto.data_inicio_contrato());
-        newLocacao.setDuracao_meses(dto.duracao_meses());
-        newLocacao.setStatus(Status.ATIVO);
+        Locacao newLocacao = LocacaoMapper.toEntity(dto);
         newLocacao.setImovel(imovelDaLocacao);
         newLocacao.setInquilino(inquilinoDaLocacao);
 
@@ -111,10 +107,12 @@ public class LocacaoService {
         Inquilino inquilinoBuscado = inquilinoRepository.findById(dto.inquilinoId())
                         .orElseThrow(() -> new RuntimeException("Inquilino não encontrado para associação."));
 
-        locacaoAtualizado.setValor_aluguel(dto.valor_aluguel());
-        locacaoAtualizado.setDia_vencimento(dto.dia_vencimento());
-        locacaoAtualizado.setData_inicio_contrato(dto.data_inicio_contrato());
-        locacaoAtualizado.setDuracao_meses(dto.duracao_meses());
+        Locacao locacaoNovosDados = LocacaoMapper.toEntity(dto);
+
+        locacaoAtualizado.setValor_aluguel(locacaoNovosDados.getValor_aluguel());
+        locacaoAtualizado.setDia_vencimento(locacaoNovosDados.getDia_vencimento());
+        locacaoAtualizado.setData_inicio_contrato(locacaoNovosDados.getData_inicio_contrato());
+        locacaoAtualizado.setDuracao_meses(locacaoNovosDados.getDuracao_meses());
 
         locacaoAtualizado.setImovel(imovelBuscado);
         locacaoAtualizado.setInquilino(inquilinoBuscado);
